@@ -1,0 +1,110 @@
+using System;
+using System.Collections; 
+
+namespace ejercicio5
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Ejecutar(); 
+           // Console.WriteLine("Hello World!");
+            Console.ReadLine(); 
+
+        }
+        public static void Ejecutar()
+        {
+            ListaDeEnteros lista1 = new ListaDeEnteros();
+            for (int i = 1; i <= 10; i++)
+            {
+                lista1.Agregar(i);
+            } 
+            foreach (int i in lista1)
+                {
+                Console.Write(i + "-");
+                }
+            Console.WriteLine();
+
+        ListaDeEnteros lista2 = lista1.Seleccionar(n => n % 2 == 0);
+        ListaDeEnteros lista3 = lista2.Aplicar(n => n * 5);
+        ListaDeEnteros lista4 = lista1.Seleccionar(n => n > 7).Aplicar(n => n + 10);
+        ListaDeEnteros lista5 = ListaDeEnteros.Combinar(lista3, lista4, (x, y) => x + y);
+        lista1.Imprimir();
+        lista2.Imprimir();
+        lista3.Imprimir();
+        lista4.Imprimir();
+        lista5.Imprimir();
+        ListaDeEnteros.Combinar(lista5, lista3, (x, y) => x + 2 * y).Imprimir();
+
+        }
+
+    }
+class ListaDeEnteros: IEnumerable {
+    ArrayList lista = new ArrayList();
+    public void Agregar(int i) => lista.Add(i);
+    public int Cantidad => lista.Count;
+
+    public IEnumerator GetEnumerator(){
+	        return lista.GetEnumerator(); 
+        }
+    public delegate int FuncionEntera(int n); 
+    public delegate int FuncionCombinar (int x, int y);
+    public delegate bool FuncionSeleccion (int x);
+    public ListaDeEnteros Seleccionar(FuncionSeleccion unaFuncion){
+	    ListaDeEnteros aux = new ListaDeEnteros(); 
+	    foreach (int x in lista){
+            if (unaFuncion.Invoke(x))
+		        aux.Agregar(x); 
+	    }
+	    return aux; 
+    }
+    public static ListaDeEnteros Combinar(ListaDeEnteros lis1, ListaDeEnteros lis2, FuncionCombinar unaFuncion){
+	    ListaDeEnteros nuevaLista = new ListaDeEnteros(); 
+	    IEnumerator e1 = lis1.GetEnumerator(); 
+	    IEnumerator e2 = lis2.GetEnumerator();
+        
+
+	    if (lis1.Cantidad < lis2.Cantidad){
+		
+	            while (e2.MoveNext()){
+	                if (e1.MoveNext()){
+		                nuevaLista.Agregar(unaFuncion.Invoke((int)e1.Current, (int)e2.Current)); 
+	                }
+	                else{
+		                nuevaLista.Agregar((int)e2.Current); 
+	                }
+                }  
+	    }
+	    else {
+		    while (e1.MoveNext()){
+	            if (e2.MoveNext()){
+		            nuevaLista.Agregar(unaFuncion.Invoke((int)e1.Current, (int)e2.Current)); 
+	            }
+	            else{
+		            nuevaLista.Agregar((int)e1.Current); 
+	            }
+            }
+	    }
+	
+	    return nuevaLista; 
+	
+    }
+
+    public ListaDeEnteros Aplicar (FuncionEntera unaFuncion){
+	    ListaDeEnteros aux = new ListaDeEnteros(); 
+	    foreach(int x in lista){
+		    aux.Agregar(unaFuncion.Invoke(x)); 
+	    }
+	    return aux; 
+    }
+    public void Imprimir() {
+	    foreach (int x in lista){
+		    Console.Write(x +", "); 
+	}
+        Console.WriteLine(); 
+    } 
+
+
+    }//
+
+}
