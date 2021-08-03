@@ -1,0 +1,85 @@
+using System;
+
+namespace ejercicio8
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Ejecutar(); 
+            //Console.WriteLine("Hello World!");
+            Console.ReadLine(); 
+        }
+        public static void Ejecutar(){
+            Ingresador ingresador = new Ingresador();
+            ingresador.LineaVaciaIngresada += (sender, e) =>
+                    { Console.WriteLine("Se ingresó una línea en blanco"); };
+            ingresador.NroIngresado += (sender, e) =>
+                    { Console.WriteLine($"Se ingresó el número {e.Valor}"); };
+            ingresador.Ingresar();
+
+        }
+    }
+    class NumeroIngresadoEventArgs: EventArgs{
+	    public int Valor {get; set; }
+    }
+
+    delegate void NumeroIngresadoEventHandler(object sender, NumeroIngresadoEventArgs e); 
+    delegate void LineaVaciaIngresadaEventHandler(object sender, EventArgs e);
+
+
+    class Ingresador{
+
+	
+	    private NumeroIngresadoEventHandler _numeroIngresado; 
+	    private LineaVaciaIngresadaEventHandler _lineaVacia; 
+
+	    public event NumeroIngresadoEventHandler NroIngresado{
+		    add{
+			    if (_numeroIngresado == null ){
+				    _numeroIngresado += value; 
+			    }
+			    else {
+                    Console.WriteLine("Se denego suscripcion.-"); 
+                    }
+		    }
+		    remove{
+			    _numeroIngresado -= value; 
+		    }
+	    }
+	    public event LineaVaciaIngresadaEventHandler LineaVaciaIngresada{
+		    add{
+			    if (_lineaVacia == null){
+				    _lineaVacia += value;
+			    }
+			    else {
+                    Console.WriteLine("Se denego suscripcion.-"); 
+                    }
+		}
+		    remove{
+			    _lineaVacia -= value; 
+		    }
+	    }
+	
+	    public void Ingresar(){
+		    bool esNumero; 
+		    int valor; 
+		    Console.WriteLine ("Ingrese Palabra: "); 
+		    string palabra = Console.ReadLine(); 
+		    while (palabra != "fin"){
+			
+			    if ((palabra == "")&&( _lineaVacia != null)){
+				    _lineaVacia(this, EventArgs.Empty);}
+			    else{
+				    esNumero = Int32.TryParse(palabra, out valor); 
+				    if ((esNumero )&&(_numeroIngresado != null)) 	
+				        _numeroIngresado (this, new NumeroIngresadoEventArgs() {Valor = valor});
+			        }
+			    Console.WriteLine("Ingrese palabra:  ");
+			    palabra = Console.ReadLine(); 
+
+		        } 
+	
+	        }
+    }
+}
