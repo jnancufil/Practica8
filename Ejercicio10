@@ -1,0 +1,71 @@
+using System;
+
+namespace ejercicio10
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Articulo a = new Articulo();
+            a.PrecioCambiado += precioCambiado;
+            a.Codigo = 1;
+            a.Precio = 10;
+            a.Precio = 12;
+            a.Precio = 12;
+            a.Precio = 14;
+            Console.WriteLine();
+            //Console.WriteLine("Hello World!");
+            Console.ReadLine(); 
+            
+        }
+        
+        public static void precioCambiado(object sender, PrecioCambiadoEventArgs e)
+        {
+            string texto = $"Artículo {e.Codigo} valía {e.PrecioAnterior}";
+            texto += $" y ahora vale {e.PrecioNuevo}";
+            Console.WriteLine(texto);
+        }
+    }
+    class PrecioCambiadoEventArgs: EventArgs{
+	    public int Codigo {get; set; }
+	    public int PrecioAnterior {get; set; }
+	    public int PrecioNuevo	{get; set; }
+    }
+
+    delegate void PrecioCambiadoEventHandler(object sender, PrecioCambiadoEventArgs e); 
+
+
+
+    class Articulo{
+
+	    public int Codigo {get; set; }
+	    private int _precio; 
+	    public int Precio {
+		    get => _precio; 
+		    set{
+			    if ((value != _precio) && (_precioCambiado != null)){
+				    _precioCambiado(this, new PrecioCambiadoEventArgs (){Codigo = Codigo, PrecioAnterior = _precio, PrecioNuevo = value}); 	
+			    }
+			    _precio = value; 
+		    }
+	 }
+	    private PrecioCambiadoEventHandler _precioCambiado; 
+	
+
+	    public event PrecioCambiadoEventHandler PrecioCambiado{
+		    add{
+			    if (_precioCambiado == null ){
+				    _precioCambiado += value; 
+			    }
+			    else {
+                    Console.WriteLine("Se denego suscripcion.-");
+                     }
+		    }
+		    remove{
+			    _precioCambiado -= value; 
+            }
+	    }
+		
+}
+
+}
