@@ -1,0 +1,51 @@
+using System;
+
+namespace ejercicio7
+{
+    class Program
+            {
+                static void Main()
+                {
+                ContadorDeLineas contador = new ContadorDeLineas();
+                contador.Contar();
+                }
+            }
+            class ContadorDeLineas
+            {
+                private int _cantLineas = 0;
+                public void Contar()
+                {
+                Ingresador _ingresador = new Ingresador();
+                _ingresador.OtraLinea +=UnaLineaMas; //me suscribo al evento de la clase Ingresador
+                _ingresador.Ingresar();
+                Console.WriteLine($"Cantidad de líneas ingresadas: {_cantLineas}");
+
+                }
+                public void UnaLineaMas(object sender,EventArgs e) => _cantLineas++;
+
+            }
+            class Ingresador
+            {
+                private EventHandler _otraLinea;
+                public event EventHandler OtraLinea
+                {
+                    add
+                    {
+                        _otraLinea += value;
+                    }
+                    remove
+                    {
+                        _otraLinea -= value;
+                    }
+                }
+                public void Ingresar()
+                {
+                    string st = Console.ReadLine();
+                    while (st != "")
+                    {
+                        _otraLinea(this,new EventArgs()); //cada vez que escribo algo por consola se genera un evento al cual la clase ContadorDeLineas está suscripto
+                        st = Console.ReadLine();
+                    }
+                }
+            }
+}
